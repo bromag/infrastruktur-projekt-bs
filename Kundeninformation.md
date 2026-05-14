@@ -32,14 +32,26 @@ Freundliche Grüsse
 
 Damit die VM korrekt erstellt werden kann, muss der Kunde einige Angaben machen.
 
-| Angabe | Erklärung | Beispiel |
-|---|---|---|
-| Zweck der VM | Wofür wird die VM verwendet? | Testsystem |
-| Betriebssystem | Welches System soll installiert werden? | Ubuntu Server |
-| Benutzername | Mit welchem Namen möchte sich der Kunde anmelden? | `kunde01` |
-| Zugriff | Wie möchte der Kunde auf die VM zugreifen? | SSH |
-| SSH Public Key | Schlüssel für den sicheren Zugriff | `ssh-ed25519 ...` |
-| Laufzeit | Wie lange wird die VM benötigt? | bis Projektende |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{4cm}|p{6cm}|p{4cm}|}
+\hline
+\textbf{Angabe} & \textbf{Erklärung} & \textbf{Beispiel} \\
+\hline
+Zweck der VM & Wofür wird die VM verwendet? & Testsystem \\
+\hline
+Betriebssystem & Welches System soll installiert werden? & Ubuntu Server \\
+\hline
+Benutzername & Mit welchem Namen möchte sich der Kunde anmelden? & \texttt{kunde01} \\
+\hline
+Zugriff & Wie möchte der Kunde auf die VM zugreifen? & SSH \\
+\hline
+SSH Public Key & Schlüssel für den sicheren Zugriff & \texttt{ssh-ed25519 …} \\
+\hline
+Laufzeit & Wie lange wird die VM benötigt? & bis Projektende \\
+\hline
+\end{tabular}
+\end{center}
 
 Der wichtigste Punkt ist der **SSH Public Key**. Damit kann sich der Kunde sicher auf der VM anmelden, ohne dass ein Passwort per E-Mail verschickt werden muss.
 
@@ -84,9 +96,7 @@ Freundliche Grüsse
 
 ## 1.6 Übersicht des Kundenzugriffs
 
-<p align="center">
-  <img src="/images/kundensicht_vm_zugriff_einfach.drawio.png" alt="Kundensicht VM-Zugriff" width="70%">
-</p>
+![Kundensicht VM-Zugriff](images/kundensicht_vm_zugriff_einfach.drawio.png){ width=100% }
 
 Die Darstellung zeigt den Zugriff aus Sicht des Kunden. Der Kunde muss keine technischen Details zur Infrastruktur kennen. Für ihn sind nur die erhaltenen Zugangsdaten wichtig.
 
@@ -96,10 +106,18 @@ Der DNS-Name, zum Beispiel `pfsense-bs.athena-forge.ch`, dient als Adresse zur U
 
 Beispiel:
 
-| DNS-Name | Port | Ziel |
-|---|---:|---|
-| `pfsense-bs.athena-forge.ch` | `2222` | VM 1 |
-| `pfsense-bs.athena-forge.ch` | `2223` | VM 2 |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{7cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{DNS-Name} & \textbf{Port} & \textbf{Ziel} \\
+\hline
+\texttt{pfsense-bs.athena-forge.ch} & \texttt{2222} & VM 1 \\
+\hline
+\texttt{pfsense-bs.athena-forge.ch} & \texttt{2223} & VM 2 \\
+\hline
+\end{tabular}
+\end{center}
 
 Der Kunde muss sich nicht darum kümmern, wie die Verbindung intern weitergeleitet wird. Diese Weiterleitung wird von Basel-GmbH eingerichtet und betrieben. Für den Kunden reicht es aus, den bereitgestellten SSH-Befehl zu verwenden.
 
@@ -115,10 +133,18 @@ Da mehrere VMs über dieselbe öffentliche Adresse erreichbar sein können, erh�
 
 Beispiel:
 
-| Adresse | Port | Ziel |
-|---|---:|---|
-| `pfsense-bs.athena-forge.ch` | `2222` | VM 1 |
-| `pfsense-bs.athena-forge.ch` | `2223` | VM 2 |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{7cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Adresse} & \textbf{Port} & \textbf{Ziel} \\
+\hline
+\texttt{pfsense-bs.athena-forge.ch} & \texttt{2222} & VM 1 \\
+\hline
+\texttt{pfsense-bs.athena-forge.ch} & \texttt{2223} & VM 2 \\
+\hline
+\end{tabular}
+\end{center}
 
 Der Kunde muss sich nur den DNS-Namen, den Benutzernamen und den Port merken.
 

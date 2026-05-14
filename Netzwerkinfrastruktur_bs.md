@@ -1,10 +1,13 @@
 # Technische Dokumentation: Externer Zugriff auf Proxmox-VMs über pfSense, NAT und DNS
 
-<p align="center">
-  <img src="/images/proxmox-img.webp" alt="Proxmox" width="20%">
-  <img src="/images/pfsense-img.png" alt="pfSense" width="20%">
-  <img src="/images/tailscale-img.png" alt="Tailscale" width="20%">
-</p>
+\begin{center}
+\includegraphics[width=0.20\textwidth]{images/proxmox_Logo.png}
+\hspace{1cm}
+\includegraphics[width=0.20\textwidth]{images/pfsense-img.png}
+\hspace{1cm}
+\includegraphics[width=0.20\textwidth]{images/tailscale-img.png}
+\end{center}
+
 
 ## 1. Ausgangslage
 
@@ -36,23 +39,35 @@ Ziel des Projekts ist der Aufbau einer funktionierenden virtuellen Netzwerkumgeb
 
 Die Umgebung wurde auf einem Proxmox-Host aufgebaut. Neben der bestehenden Standard-Bridge `vmbr0` wurden zwei zusätzliche Bridges erstellt.
 
-| Komponente | Funktion | Zugewiesenes Netz / Interface |
-|---|---|---|
-| Proxmox `vmbr0` | WAN-Anbindung der pfSense | Externes / bestehendes Netzwerk |
-| Proxmox `vmbr1` | Internes Netz für VM im ersten Netz | `10.10.10.0/24` |
-| Proxmox `vmbr2` | Internes Netz für VM im zweiten Netz | `10.10.20.0/24` |
-| pfSense WAN | Verbindung Richtung Router / Internet | `192.168.1.15` über `vmbr0` |
-| pfSense LAN | Gateway für Netz 1 | `10.10.10.1` |
-| pfSense OPT1 | Gateway für Netz 2 | `10.10.20.1` |
-| VM im ersten Netz | Ubuntu Server | `10.10.10.11` |
-| VM im zweiten Netz | Ubuntu Server | `10.10.20.11` |
-| Ubuntu Desktop VM | Administrations-Client | Zugriff auf pfSense WebGUI |
+\begin{center}
+\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Komponente} & \textbf{Funktion} & \textbf{Netz / Interface} \\
+\hline
+Proxmox \texttt{vmbr0} & WAN-Anbindung der pfSense & Externes / bestehendes Netzwerk \\
+\hline
+Proxmox \texttt{vmbr1} & Internes Netz 1 & \texttt{10.10.10.0/24} \\
+\hline
+Proxmox \texttt{vmbr2} & Internes Netz 2 & \texttt{10.10.20.0/24} \\
+\hline
+pfSense WAN & Verbindung zum Router / Internet & \texttt{192.168.1.15} über \texttt{vmbr0} \\
+\hline
+pfSense LAN & Gateway für Netz 1 & \texttt{10.10.10.1} \\
+\hline
+pfSense OPT1 & Gateway für Netz 2 & \texttt{10.10.20.1} \\
+\hline
+VM Netz 1 & Ubuntu Server & \texttt{10.10.10.11} \\
+\hline
+VM Netz 2 & Ubuntu Server & \texttt{10.10.20.11} \\
+\hline
+Ubuntu Desktop VM & Administrations-Client & Zugriff auf pfSense WebGUI \\
+\hline
+\end{tabular}
+\end{center}
 
 ## 3.1 Beschreibung der Netzwerkinfrastruktur
 
-<p align="center">
-  <img src="/images/netzwerkinfrastruktur_bs_admin.drawio.png" alt="Netzwerkinfrastruktur BS Admin" width="60%">
-</p>
+![Kundensicht VM-Zugriff](images/netzwerkinfrastruktur_bs_admin.drawio.png){ width=80% }
 
 Die Zeichnung zeigt die Netzwerkinfrastruktur für den externen Zugriff auf zwei virtuelle Maschinen. Die Umgebung besteht aus einem Proxmox-Server, einer pfSense-Firewall, einem UniFi-Router sowie DNS über die Domain `athena-forge.ch`.
 
@@ -84,10 +99,18 @@ Zusätzlich ist in der Zeichnung Tailscale eingezeichnet. Tailscale dient als se
 
 Zusammengefasst zeigt die Zeichnung zwei Zugriffswege:
 
-| Zugriff | Zweck |
-|---|---|
-| Cloudflare DNS → UniFi → pfSense → VM | Zugriff für Benutzer oder Kunden auf freigegebene VMs |
-| Tailscale → interne Infrastruktur | Sicherer administrativer Zugriff für Betreiber |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{6cm}|p{7cm}|}
+\hline
+\textbf{Zugriff} & \textbf{Zweck} \\
+\hline
+Cloudflare DNS $\rightarrow$ UniFi $\rightarrow$ pfSense $\rightarrow$ VM & Zugriff für Benutzer oder Kunden auf freigegebene VMs \\
+\hline
+Tailscale $\rightarrow$ interne Infrastruktur & Sicherer administrativer Zugriff für Betreiber \\
+\hline
+\end{tabular}
+\end{center}
 
 ## 4. Aufbau auf dem Proxmox-Host
 
@@ -106,11 +129,20 @@ Diese Bridges dienen als virtuelle Switches innerhalb von Proxmox. Dadurch könn
 
 Anschliessend wurde eine pfSense-VM erstellt. Dieser VM wurden drei virtuelle Netzwerkadapter zugewiesen:
 
-| pfSense Interface | Proxmox Bridge | Zweck |
-|---|---|---|
-| WAN | `vmbr0` | Verbindung zum bestehenden Netzwerk / Router, statische IP `192.168.1.15` |
-| LAN | `vmbr1` | Internes Netz 1 |
-| OPT1 | `vmbr2` | Internes Netz 2 |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{4cm}|p{4cm}|p{6cm}|}
+\hline
+\textbf{pfSense Interface} & \textbf{Proxmox Bridge} & \textbf{Zweck} \\
+\hline
+WAN & \texttt{vmbr0} & Verbindung zum bestehenden Netzwerk / Router, statische IP \texttt{192.168.1.15} \\
+\hline
+LAN & \texttt{vmbr1} & Internes Netz 1 \\
+\hline
+OPT1 & \texttt{vmbr2} & Internes Netz 2 \\
+\hline
+\end{tabular}
+\end{center}
 
 Die pfSense übernimmt damit die Rolle des zentralen Gateways für beide internen Netze.
 
@@ -128,11 +160,20 @@ Das LAN-Interface wurde für das Netz `10.10.10.0/24` verwendet. Das OPT1-Interf
 
 Die Gateway-Adressen wurden wie folgt definiert:
 
-| Interface | IP-Adresse | Netz |
-|---|---:|---|
-| WAN | `192.168.1.15` | bestehendes Router-Netz |
-| LAN | `10.10.10.1` | `10.10.10.0/24` |
-| OPT1 | `10.10.20.1` | `10.10.20.0/24` |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{4cm}|p{4cm}|p{6cm}|}
+\hline
+\textbf{Interface} & \textbf{IP-Adresse} & \textbf{Netz} \\
+\hline
+WAN & \texttt{192.168.1.15} & bestehendes Router-Netz \\
+\hline
+LAN & \texttt{10.10.10.1} & \texttt{10.10.10.0/24} \\
+\hline
+OPT1 & \texttt{10.10.20.1} & \texttt{10.10.20.0/24} \\
+\hline
+\end{tabular}
+\end{center}
 
 ### 5.2 Aktivierung von OPT1
 
@@ -154,27 +195,51 @@ Im nächsten Schritt wurden zwei Ubuntu-Server-VMs erstellt.
 
 Die erste Ubuntu-VM wurde dem Netzwerk `vmbr1` zugewiesen. Dadurch befindet sie sich im Netz `10.10.10.0/24`.
 
-| Einstellung | Wert |
-|---|---|
-| IP-Adresse | `10.10.10.11` |
-| Netz | `10.10.10.0/24` |
-| Gateway | `10.10.10.1` |
-| Bridge | `vmbr1` |
-| Distribution | Ubuntu Server |
-| Zweck | Test-VM im ersten Netz, optional Git-Server |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{5cm}|p{8cm}|}
+\hline
+\textbf{Einstellung} & \textbf{Wert} \\
+\hline
+IP-Adresse & \texttt{10.10.10.11} \\
+\hline
+Netz & \texttt{10.10.10.0/24} \\
+\hline
+Gateway & \texttt{10.10.10.1} \\
+\hline
+Bridge & \texttt{vmbr1} \\
+\hline
+Distribution & Ubuntu Server \\
+\hline
+Zweck & Test-VM im ersten Netz, optional Git-Server \\
+\hline
+\end{tabular}
+\end{center}
 
 ### 6.2 VM im zweiten Netz
 
 Die zweite Ubuntu-VM wurde dem Netzwerk `vmbr2` zugewiesen. Dadurch befindet sie sich im Netz `10.10.20.0/24`.
 
-| Einstellung | Wert |
-|---|---|
-| IP-Adresse | `10.10.20.11` |
-| Netz | `10.10.20.0/24` |
-| Gateway | `10.10.20.1` |
-| Bridge | `vmbr2` |
-| Distribution | Ubuntu Server |
-| Zweck | Test-VM im zweiten Netz, optional Ansible-Server |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{5cm}|p{8cm}|}
+\hline
+\textbf{Einstellung} & \textbf{Wert} \\
+\hline
+IP-Adresse & \texttt{10.10.20.11} \\
+\hline
+Netz & \texttt{10.10.20.0/24} \\
+\hline
+Gateway & \texttt{10.10.20.1} \\
+\hline
+Bridge & \texttt{vmbr2} \\
+\hline
+Distribution & Ubuntu Server \\
+\hline
+Zweck & Test-VM im zweiten Netz, optional Ansible-Server \\
+\hline
+\end{tabular}
+\end{center}
 
 ## 7. Administrationszugriff auf pfSense
 
@@ -202,15 +267,28 @@ Die Portweiterleitung wurde auf dem WAN-Interface der pfSense erstellt. Als Prot
 
 Eine der NAT-Regeln leitet den externen Port `2223` auf die interne IP-Adresse `10.10.20.11` weiter. Als Ziel-Port wurde SSH verwendet.
 
-| Einstellung | Wert |
-|---|---|
-| Interface | WAN |
-| Address Family | IPv4 |
-| Protocol | TCP |
-| Destination | WAN address |
-| Destination Port | `2223` |
-| Redirect Target IP | `10.10.20.11` |
-| Redirect Target Port | SSH / `22` |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{5cm}|p{8cm}|}
+\hline
+\textbf{Einstellung} & \textbf{Wert} \tabularnewline
+\hline
+Interface & WAN \tabularnewline
+\hline
+Address Family & IPv4 \tabularnewline
+\hline
+Protocol & TCP \tabularnewline
+\hline
+Destination & WAN address \tabularnewline
+\hline
+Destination Port & \texttt{2223} \tabularnewline
+\hline
+Redirect Target IP & \texttt{10.10.20.11} \tabularnewline
+\hline
+Redirect Target Port & SSH / \texttt{22} \tabularnewline
+\hline
+\end{tabular}
+\end{center}
 
 Damit kann ein SSH-Zugriff auf die VM im zweiten Netz über den Port `2223` erfolgen.
 
@@ -224,10 +302,18 @@ ssh <benutzername>@pfsense-bs.athena-forge.ch -p 2223
 
 Zusätzlich wurde eine zweite NAT-Regel erstellt. Diese verwendet den externen Port `2222` und leitet auf den SSH-Port der VM im ersten Netz mit der IP-Adresse `10.10.10.11` weiter.
 
-| Externer Port | Interne Ziel-VM | Interner Port | Zweck |
-|---:|---|---:|---|
-| `2222` | VM im ersten Netz `10.10.10.11` | `22` | SSH-Zugriff auf VM im ersten Netz |
-| `2223` | VM im zweiten Netz `10.10.20.11` | `22` | SSH-Zugriff auf VM im zweiten Netz |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3cm}|p{5cm}|p{3cm}|p{4cm}|}
+\hline
+\textbf{Externer Port} & \textbf{Interne Ziel-VM} & \textbf{Interner Port} & \textbf{Zweck} \\
+\hline
+\texttt{2222} & VM im ersten Netz \texttt{10.10.10.11} & \texttt{22} & SSH-Zugriff auf VM im ersten Netz \\
+\hline
+\texttt{2223} & VM im zweiten Netz \texttt{10.10.20.11} & \texttt{22} & SSH-Zugriff auf VM im zweiten Netz \\
+\hline
+\end{tabular}
+\end{center}
 
 Dadurch können zwei verschiedene interne Server über unterschiedliche externe Ports erreicht werden.
 
@@ -316,19 +402,36 @@ Die pfSense Weboberfläche bleibt intern erreichbar und wird nicht direkt ins In
 
 ## 14. Zusammenfassung der wichtigsten Adressen und Ports
 
-| Element | Wert |
-|---|---|
-| pfSense WAN-IP | `192.168.1.15` |
-| pfSense LAN-Gateway | `10.10.10.1` |
-| pfSense OPT1-Gateway | `10.10.20.1` |
-| VM im ersten Netz | `10.10.10.11` |
-| VM im zweiten Netz | `10.10.20.11` |
-| Externer DNS-Name | `pfsense-bs.athena-forge.ch` |
-| SSH VM im ersten Netz | Port `2222` |
-| SSH VM im zweiten Netz | Port `2223` |
-| DNS-Verwaltung | Cloudflare |
-| Domain-Registrar | Hostpoint |
-| Administrationszugriff | Tailscale / interne Ubuntu Desktop VM |
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{6cm}|p{7cm}|}
+\hline
+\textbf{Element} & \textbf{Wert} \\
+\hline
+pfSense WAN-IP & \texttt{192.168.1.15} \\
+\hline
+pfSense LAN-Gateway & \texttt{10.10.10.1} \\
+\hline
+pfSense OPT1-Gateway & \texttt{10.10.20.1} \\
+\hline
+VM im ersten Netz & \texttt{10.10.10.11} \\
+\hline
+VM im zweiten Netz & \texttt{10.10.20.11} \\
+\hline
+Externer DNS-Name & \texttt{pfsense-bs.athena-forge.ch} \\
+\hline
+SSH VM im ersten Netz & Port \texttt{2222} \\
+\hline
+SSH VM im zweiten Netz & Port \texttt{2223} \\
+\hline
+DNS-Verwaltung & Cloudflare \\
+\hline
+Domain-Registrar & Hostpoint \\
+\hline
+Administrationszugriff & Tailscale / interne Ubuntu Desktop VM \\
+\hline
+\end{tabular}
+\end{center}
 
 ## 15. Kurzes Fazit
 
