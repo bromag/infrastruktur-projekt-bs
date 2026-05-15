@@ -59,7 +59,7 @@ Der wichtigste Punkt ist der **SSH Public Key**. Damit kann sich der Kunde siche
 
 Nachdem die Bestellung eingegangen ist, erstellt die Basel-GmbH die VM auf der Proxmox-Umgebung.
 
-Der Basel-GmbH erledigt dabei folgende Schritte:
+Die Basel-GmbH erledigt dabei folgende Schritte:
 
 1. Sie prüft, ob genügend Ressourcen vorhanden sind.
 2. Sie erstellt die VM.
