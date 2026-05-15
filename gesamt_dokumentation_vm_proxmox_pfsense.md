@@ -345,7 +345,9 @@ Da sich die pfSense hinter dem UniFi-Router befindet, musste zusätzlich auf dem
 
 Auf dem UniFi-Router wurden die Ports `2222` bis `2223` geöffnet und an die statische WAN-Adresse der pfSense `192.168.1.15` weitergeleitet.
 
-![Unifi Portweiterleitung](images/unifi_portweiterleitung.drawio.png){ width=50% }
+\begin{center}
+\includegraphics[width=0.35\textwidth]{images/unifi_portweiterleitung.drawio.png}
+\end{center}
 
 ## 2.11 DNS-Verwaltung über Cloudflare
 
