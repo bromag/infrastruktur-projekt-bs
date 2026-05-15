@@ -8,7 +8,6 @@
 \includegraphics[width=0.20\textwidth]{images/tailscale-img.png}
 \end{center}
 
-
 ## 1. Ausgangslage
 
 Im Rahmen des Projekts soll eine Netzwerkumgebung aufgebaut werden, in welcher zwei Ubuntu-Server-VMs in voneinander getrennten Netzen betrieben werden. Zusätzlich soll ein externer Zugriff auf diese Systeme ermöglicht werden, ohne direkt mit der öffentlichen IP-Adresse arbeiten zu müssen.
