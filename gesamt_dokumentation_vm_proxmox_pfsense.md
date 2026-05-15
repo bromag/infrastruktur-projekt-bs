@@ -347,7 +347,7 @@ Auf dem UniFi-Router wurden die Ports `2222` bis `2223` geöffnet und an die sta
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.35\textwidth]{images/unifi_portweiterleitung.drawio.png}
+\includegraphics[width=0.30\textwidth]{images/unifi_portweiterleitung.drawio.png}
 \caption{UniFi-Portweiterleitung}
 \end{figure}
 
